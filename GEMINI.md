@@ -11,4 +11,4 @@ git commit -m "feat: Implement Ollama API integration"
 ---
 
 **Note for Gemini Agent:**
-Please read and update this `GEMINI.md` file constantly to ensure adherence to project conventions and to keep track of important guidelines.
+Please read and update this `project_memory.json` file constantly to ensure adherence to project conventions and to keep track of important guidelines.
