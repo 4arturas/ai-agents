@@ -3,10 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Agents Web App</title>
+    <title>React with Context and Net Tab</title>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/antd/5.10.0/reset.min.css" rel="stylesheet">
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/antd/5.26.5/antd.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+
+    <!-- Load our component files -->
+    <script type="text/babel" src="components/Context.js"></script>
+
+    <style>
+        body { padding: 30px }
+    </style>
 </head>
 <body>
-    <h1>Welcome to the AI Agents Web Application</h1>
-    <p>This is a basic web interface for interacting with AI agents.</p>
+
+<div id="root"></div>
+
+<script type="text/babel">
+    function App() {
+        const [appContext, setAppContext] = React.useState({
+            activeTabKey: "1",
+            demoMessage: "Welcome to the Net Tab!"
+        });
+
+        const { Tabs } = antd;
+
+        return (
+            <div>
+                <AppContext.Provider value={{ appContext, setAppContext }}>
+                    <Tabs
+                        activeKey={appContext.activeTabKey}
+                        onChange={(key) => {
+                            setAppContext({ ...appContext, activeTabKey: key });
+                        }}
+                    >
+                        <Tabs.TabPane tab="Net Tab" key="1">
+                            <NetTab />
+                        </Tabs.TabPane>
+                        <Tabs.TabPane tab="Context Demo" key="2">
+                            <ContextConsumer />
+                        </Tabs.TabPane>
+                        <Tabs.TabPane tab="Cognitive Loop" key="3">
+                            <CognitiveLoop />
+                        </Tabs.TabPane>
+                    </Tabs>
+                </AppContext.Provider>
+            </div>
+        );
+    }
+
+    const { createRoot } = ReactDOM;
+    const root = createRoot(document.getElementById('root'));
+    root.render(<App />);
+</script>
 </body>
 </html>
