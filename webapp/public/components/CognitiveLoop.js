@@ -25,19 +25,60 @@ function CognitiveLoop() {
     const renderMarkdown = (text) => {
         if (!text) return '';
 
-        // Convert **bold** to <strong>
-        let html = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        // Split text into lines
+        const lines = text.split(/\r?\n/);
+        let html = '';
+        let inList = false;
 
-        // Convert - list items to <ul><li>
-        html = html.replace(/(?:\r\n|\r|\n)- (.*?)(?=\r\n|\r|\n|$)/g, '<li>$1</li>');
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
 
-        // Wrap consecutive list items in <ul> tags
-        html = html.replace(/(<li>.*<\/li>)+/g, '<ul>$&</ul>');
+            if (line.startsWith('- ')) {
+                // If not in a list, start one
+                if (!inList) {
+                    html += '<ul>';
+                    inList = true;
+                }
+                html += `<li>${escapeHtml(line.substring(2))}</li>`;
+            } else {
+                // If we were in a list, close it
+                if (inList) {
+                    html += '</ul>';
+                    inList = false;
+                }
 
-        // Convert line breaks to <br>
-        html = html.replace(/\r\n|\r|\n/g, '<br>');
+                // Handle bold text and add the line
+                let formattedLine = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                if (formattedLine) {
+                    html += escapeHtml(formattedLine) + '<br>';
+                } else if (line === '' && html.endsWith('<br>')) {
+                    // Add extra line break for empty lines
+                    html += '<br>';
+                }
+            }
+        }
+
+        // Close any open list at the end
+        if (inList) {
+            html += '</ul>';
+        }
+
+        // Remove trailing <br> if it exists
+        if (html.endsWith('<br>')) {
+            html = html.slice(0, -4);
+        }
 
         return html;
+    };
+
+    // Helper function to escape HTML to prevent XSS
+    const escapeHtml = (unsafe) => {
+        return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
     };
 
 
