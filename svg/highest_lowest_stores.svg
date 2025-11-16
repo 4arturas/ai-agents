@@ -1,0 +1,28 @@
+<svg width="500" height="300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="#f0f0f0" />
+
+  <!-- Title -->
+  <text x="10" y="20" font-family="sans-serif" font-size="14">Highest and Lowest Performing Stores</text>
+
+  <!-- West Stores -->
+  <rect x="50" y="150" width="40" height="100" fill="blue" />
+  <rect x="100" y="200" width="40" height="50" fill="blue" />
+  <rect x="150" y="100" width="40" height="150" fill="blue" />
+
+  <!-- East Stores -->
+  <rect x="300" y="180" width="40" height="70" fill="green" />
+  <rect x="350" y="120" width="40" height="130" fill="green" />
+  <rect x="400" y="220" width="40" height="30" fill="green" />
+
+  <!-- Dividing Line -->
+  <line x1="250" y1="40" x2="250" y2="300" stroke="gray" stroke-dasharray="5,5" />
+
+  <!-- Labels -->
+  <text x="120" y="50" font-family="sans-serif" font-size="14">West</text>
+  <text x="350" y="50" font-family="sans-serif" font-size="14">East</text>
+
+  <!-- Highest and Lowest -->
+  <text x="140" y="90" font-family="sans-serif" font-size="12" fill="red">Highest</text>
+  <text x="390" y="210" font-family="sans-serif" font-size="12" fill="red">Lowest</text>
+</svg>

@@ -1,0 +1,46 @@
+<svg width="500" height="400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="#f0f0f0" />
+
+  <!-- Title -->
+  <text x="10" y="20" font-family="sans-serif" font-size="14">Sorting a Customer Database</text>
+
+  <!-- Unsorted List -->
+  <text x="50" y="60" font-family="sans-serif" font-size="12">Unsorted:</text>
+  <text x="60" y="80" font-family="sans-serif" font-size="12">Smith</text>
+  <text x="60" y="100" font-family="sans-serif" font-size="12">Jones</text>
+  <text x="60" y="120" font-family="sans-serif" font-size="12">Williams</text>
+  <text x="60" y="140" font-family="sans-serif" font-size="12">Brown</text>
+  <text x="60" y="160" font-family="sans-serif" font-size="12">Davis</text>
+  <text x="60" y="180" font-family="sans-serif" font-size="12">Miller</text>
+
+  <!-- Divided Lists -->
+  <text x="200" y="60" font-family="sans-serif" font-size="12">Divided:</text>
+  <text x="210" y="80" font-family="sans-serif" font-size="12">Smith</text>
+  <text x="210" y="100" font-family="sans-serif" font-size="12">Jones</text>
+  <text x="210" y="120" font-family="sans-serif" font-size="12">Williams</text>
+
+  <text x="280" y="80" font-family="sans-serif" font-size="12">Brown</text>
+  <text x="280" y="100" font-family="sans-serif" font-size="12">Davis</text>
+  <text x="280" y="120" font-family="sans-serif" font-size="12">Miller</text>
+
+  <!-- Sorted Halves -->
+  <text x="200" y="180" font-family="sans-serif" font-size="12">Sorted Halves:</text>
+  <text x="210" y="200" font-family="sans-serif" font-size="12">Jones</text>
+  <text x="210" y="220" font-family="sans-serif" font-size="12">Smith</text>
+  <text x="210" y="240" font-family="sans-serif" font-size="12">Williams</text>
+
+  <text x="280" y="200" font-family="sans-serif" font-size="12">Brown</text>
+  <text x="280" y="220" font-family="sans-serif" font-size="12">Davis</text>
+  <text x="280" y="240" font-family="sans-serif" font-size="12">Miller</text>
+
+  <!-- Merged List -->
+  <text x="380" y="60" font-family="sans-serif" font-size="12">Merged:</text>
+  <text x="390" y="80" font-family="sans-serif" font-size="12">Brown</text>
+  <text x="390" y="100" font-family="sans-serif" font-size="12">Davis</text>
+  <text x="390" y="120" font-family="sans-serif" font-size="12">Jones</text>
+  <text x="390" y="140" font-family="sans-serif" font-size="12">Miller</text>
+  <text x="390" y="160" font-family="sans-serif" font-size="12">Smith</text>
+  <text x="390" y="180" font-family="sans-serif" font-size="12">Williams</text>
+
+</svg>
