@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Review Patterns</title>
+  <style>
+    body { font-family: sans-serif; }
+    .pattern { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+    .pattern.validated { background-color: #e0ffe0; }
+    .input { font-weight: bold; }
+    .output { margin-top: 5px; }
+    button { margin-top: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Review Patterns</h1>
+  <div id="patterns-container"></div>
+
+  <script>
+    async function fetchPatterns() {
+      const response = await fetch('/api/patterns');
+      const patterns = await response.json();
+      const container = document.getElementById('patterns-container');
+      container.innerHTML = '';
+      for (const pattern of patterns) {
+        const div = document.createElement('div');
+        div.className = 'pattern' + (pattern.validated ? ' validated' : '');
+        div.innerHTML = `
+          <div class="input">Input: ${pattern.input}</div>
+          <div class="output">Output: ${pattern.output}</div>
+          <div class="timestamp">Timestamp: ${pattern.timestamp}</div>
+          ${!pattern.validated ? '<button onclick="validatePattern(\'" + pattern.timestamp + "\')">Validate</button>' : ''}
+        `;
+        container.appendChild(div);
+      }
+    }
+
+    async function validatePattern(timestamp) {
+      await fetch('/api/patterns/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ timestamp }),
+      });
+      fetchPatterns();
+    }
+
+    fetchPatterns();
+  </script>
+</body>
+</html>
