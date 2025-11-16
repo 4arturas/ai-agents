@@ -1,13 +1,19 @@
-// Cognitive Loop component
+const { useState } = React;
+const { Input, Button, Card, Space } = antd;
+const { TextArea } = Input;
+
 function CognitiveLoop() {
-    const { TextArea, Button, Card, Space } = antd;
-    const { useState } = React;
-    
-    const [problem, setProblem] = useState("");
+    const { appContext, setAppContext } = React.useContext(AppContext);
+    const { problem } = appContext;
+    const setProblem = (problem) => {
+        setAppContext(prev => ({ ...prev, problem }));
+    };
+
     const [observeResponse, setObserveResponse] = useState("");
     const [thinkResponse, setThinkResponse] = useState("");
     const [decideResponse, setDecideResponse] = useState("");
     const [learnResponse, setLearnResponse] = useState("");
+    const [pastActions, setPastActions] = useState([]);
     const [loading, setLoading] = useState({
         observe: false,
         think: false,
@@ -15,7 +21,6 @@ function CognitiveLoop() {
         learn: false
     });
 
-    // Define the prompts from prompts.md
     const prompts = {
         observe: "OBSERVE. You are an AI agent. Your goal is, current Goal. Your past actions, past Actions. Please analyze the current situation and provide information to help achieve the goal.",
         think: "THINK. Based on this observation. Please think through the best next step to achieve, current Goal. Consider your past actions, past Actions.",
@@ -24,12 +29,23 @@ function CognitiveLoop() {
     };
 
     // Function to call Ollama API
-    const callOllama = async (prompt, model = 'qwen3-vl:235b-cloud') => {
+    // TODO: remove model attribute from here, as well as in server.js, I have added default model into utils/callOllama.js
+    const callOllama = async (prompt) => {
         try {
-            // In a real implementation, this would call the actual Ollama API
-            // For now, we'll simulate the response
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
-            return `This is a simulated response for: ${prompt.substring(0, 50)}...`;
+            const response = await fetch('/api/callOllama', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ prompt }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data.response;
         } catch (error) {
             console.error("Error calling Ollama:", error);
             return "Error: Could not get response from Ollama";
@@ -39,82 +55,83 @@ function CognitiveLoop() {
     const handleObserve = async () => {
         if (!problem) return;
         setLoading(prev => ({ ...prev, observe: true }));
-        const fullPrompt = `${prompts.observe} Current problem: ${problem}`;
+        const fullPrompt = `${prompts.observe} Current problem: ${problem}. Past actions: ${JSON.stringify(pastActions)}`;
         const response = await callOllama(fullPrompt);
         setObserveResponse(response);
+        setPastActions(prev => [...prev, { action: 'observe', response }]);
         setLoading(prev => ({ ...prev, observe: false }));
     };
 
     const handleThink = async () => {
         if (!observeResponse) return;
         setLoading(prev => ({ ...prev, think: true }));
-        const fullPrompt = `${prompts.think} Based on this observation: ${observeResponse}`;
+        const fullPrompt = `${prompts.think} Based on this observation: ${observeResponse}. Past actions: ${JSON.stringify(pastActions)}`;
         const response = await callOllama(fullPrompt);
         setThinkResponse(response);
+        setPastActions(prev => [...prev, { action: 'think', response }]);
         setLoading(prev => ({ ...prev, think: false }));
     };
 
     const handleDecide = async () => {
         if (!thinkResponse) return;
         setLoading(prev => ({ ...prev, decide: true }));
-        const fullPrompt = `${prompts.decide} Based on this thought: ${thinkResponse}`;
+        const fullPrompt = `${prompts.decide} Based on this thought: ${thinkResponse}. Past actions: ${JSON.stringify(pastActions)}`;
         const response = await callOllama(fullPrompt);
         setDecideResponse(response);
+        setPastActions(prev => [...prev, { action: 'decide', response }]);
         setLoading(prev => ({ ...prev, decide: false }));
     };
 
     const handleLearn = async () => {
         if (!decideResponse) return;
         setLoading(prev => ({ ...prev, learn: true }));
-        const fullPrompt = `${prompts.learn} From this action: ${decideResponse}`;
+        const fullPrompt = `${prompts.learn} From this action: ${decideResponse}. Past actions: ${JSON.stringify(pastActions)}`;
         const response = await callOllama(fullPrompt);
         setLearnResponse(response);
+        setPastActions(prev => [...prev, { action: 'learn', response }]);
         setLoading(prev => ({ ...prev, learn: false }));
     };
 
     return (
         <div style={{ padding: '20px' }}>
             <h2>Cognitive Loop</h2>
-            
-            {/* Problem Input Field */}
+
             <Card title="Problem Input" style={{ marginBottom: '20px' }}>
                 <TextArea
                     placeholder="Enter your problem here..."
                     value={problem}
                     onChange={(e) => setProblem(e.target.value)}
-                    rows={4}
                 />
             </Card>
 
-            {/* Four Buttons */}
             <Space wrap style={{ marginBottom: '20px' }}>
-                <Button 
-                    type="primary" 
-                    onClick={handleObserve} 
+                <Button
+                    type="primary"
+                    onClick={handleObserve}
                     loading={loading.observe}
                     disabled={!problem}
                 >
                     Observe
                 </Button>
-                <Button 
-                    type="primary" 
-                    onClick={handleThink} 
+                <Button
+                    type="primary"
+                    onClick={handleThink}
                     loading={loading.think}
                     disabled={!observeResponse}
                 >
                     Think
                 </Button>
-                <Button 
-                    type="primary" 
-                    onClick={handleDecide} 
+                <Button
+                    type="primary"
+                    onClick={handleDecide}
                     loading={loading.decide}
                     disabled={!thinkResponse}
                 >
                     Decide
                 </Button>
-                <Button 
-                    type="primary" 
-                    onClick={handleLearn} 
+                <Button
+                    type="primary"
+                    onClick={handleLearn}
                     loading={loading.learn}
                     disabled={!decideResponse}
                 >
@@ -122,31 +139,30 @@ function CognitiveLoop() {
                 </Button>
             </Space>
 
-            {/* Four Areas */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
-                <Card 
-                    title="Observe" 
+                <Card
+                    title="Observe"
                     loading={loading.observe && !observeResponse}
                     style={{ minHeight: '200px' }}
                 >
                     {observeResponse && <div>{observeResponse}</div>}
                 </Card>
-                <Card 
-                    title="Think" 
+                <Card
+                    title="Think"
                     loading={loading.think && !thinkResponse}
                     style={{ minHeight: '200px' }}
                 >
                     {thinkResponse && <div>{thinkResponse}</div>}
                 </Card>
-                <Card 
-                    title="Decide" 
+                <Card
+                    title="Decide"
                     loading={loading.decide && !decideResponse}
                     style={{ minHeight: '200px' }}
                 >
                     {decideResponse && <div>{decideResponse}</div>}
                 </Card>
-                <Card 
-                    title="Learn" 
+                <Card
+                    title="Learn"
                     loading={loading.learn && !learnResponse}
                     style={{ minHeight: '200px' }}
                 >

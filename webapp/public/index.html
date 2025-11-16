@@ -29,7 +29,11 @@
     function App() {
         const [appContext, setAppContext] = React.useState({
             activeTabKey: "1",
-            demoMessage: "Cognitive Loop Interface"
+            demoMessage: "Cognitive Loop Interface",
+            problem: "Finding the Highest and Lowest-Performing Stores in a Retail Chain",
+            setProblem: (problem) => {
+                setAppContext(prev => ({ ...prev, problem }));
+            }
         });
 
         const { Tabs } = antd;
