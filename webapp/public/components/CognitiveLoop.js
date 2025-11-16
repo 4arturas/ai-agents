@@ -21,15 +21,8 @@ function CognitiveLoop() {
         learn: false
     });
 
-    const prompts = {
-        observe: "OBSERVE. You are an AI agent. Your goal is, current Goal. Your past actions, past Actions. Please analyze the current situation and provide information to help achieve the goal.",
-        think: "THINK. Based on this observation. Please think through the best next step to achieve, current Goal. Consider your past actions, past Actions.",
-        decide: "DECIDE. Based on this thought. Please suggest the best action to take to achieve: current Goal. Available actions are, agent actions. Respond with a JSON object in this format.",
-        learn: "LEARN. From this action. And this result. Please identify any patterns or lessons that could be useful for achieving: current Goal."
-    };
 
     // Function to call Ollama API
-    // TODO: remove model attribute from here, as well as in server.js, I have added default model into utils/callOllama.js
     const callOllama = async (prompt) => {
         try {
             const response = await fetch('/api/callOllama', {
@@ -55,8 +48,14 @@ function CognitiveLoop() {
     const handleObserve = async () => {
         if (!problem) return;
         setLoading(prev => ({ ...prev, observe: true }));
-        const fullPrompt = `${prompts.observe} Current problem: ${problem}. Past actions: ${JSON.stringify(pastActions)}`;
-        const response = await callOllama(fullPrompt);
+        // TODO: implement all actions the same manner as here
+        const observe = `
+        You are an AI agent.
+        Your goal is: ${problem}.
+        Your past actions: ${JSON.stringify(pastActions)}.
+        Please analyze the current situation and provide information to help achieve the goal.
+        `;
+        const response = await callOllama(observe);
         setObserveResponse(response);
         setPastActions(prev => [...prev, { action: 'observe', response }]);
         setLoading(prev => ({ ...prev, observe: false }));
@@ -65,8 +64,13 @@ function CognitiveLoop() {
     const handleThink = async () => {
         if (!observeResponse) return;
         setLoading(prev => ({ ...prev, think: true }));
-        const fullPrompt = `${prompts.think} Based on this observation: ${observeResponse}. Past actions: ${JSON.stringify(pastActions)}`;
-        const response = await callOllama(fullPrompt);
+        const thinkPrompt = `
+        Based on this observation: ${observeResponse}.
+        Your goal is: ${problem}.
+        Your past actions: ${JSON.stringify(pastActions)}.
+        Please think through the best next step to achieve the goal.
+        `;
+        const response = await callOllama(thinkPrompt);
         setThinkResponse(response);
         setPastActions(prev => [...prev, { action: 'think', response }]);
         setLoading(prev => ({ ...prev, think: false }));
@@ -75,8 +79,14 @@ function CognitiveLoop() {
     const handleDecide = async () => {
         if (!thinkResponse) return;
         setLoading(prev => ({ ...prev, decide: true }));
-        const fullPrompt = `${prompts.decide} Based on this thought: ${thinkResponse}. Past actions: ${JSON.stringify(pastActions)}`;
-        const response = await callOllama(fullPrompt);
+        const decidePrompt = `
+        Based on this thought: ${thinkResponse}.
+        Your goal is: ${problem}.
+        Your past actions: ${JSON.stringify(pastActions)}.
+        Available actions are: observe, think, decide, learn.
+        Respond with a JSON object in this format {action: "...", reason: "..."}.
+        `;
+        const response = await callOllama(decidePrompt);
         setDecideResponse(response);
         setPastActions(prev => [...prev, { action: 'decide', response }]);
         setLoading(prev => ({ ...prev, decide: false }));
@@ -85,8 +95,13 @@ function CognitiveLoop() {
     const handleLearn = async () => {
         if (!decideResponse) return;
         setLoading(prev => ({ ...prev, learn: true }));
-        const fullPrompt = `${prompts.learn} From this action: ${decideResponse}. Past actions: ${JSON.stringify(pastActions)}`;
-        const response = await callOllama(fullPrompt);
+        const learnPrompt = `
+        From this action: ${decideResponse}.
+        Your goal was: ${problem}.
+        Your past actions: ${JSON.stringify(pastActions)}.
+        Please identify any patterns or lessons that could be useful for achieving similar goals in the future.
+        `;
+        const response = await callOllama(learnPrompt);
         setLearnResponse(response);
         setPastActions(prev => [...prev, { action: 'learn', response }]);
         setLoading(prev => ({ ...prev, learn: false }));
