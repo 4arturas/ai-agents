@@ -1,5 +1,6 @@
 // Create a React context to manage application state
 const AppContext = React.createContext();
+window.AppContext = AppContext; // Make it globally available
 
 // Component to demonstrate context usage
 function ContextConsumer() {
