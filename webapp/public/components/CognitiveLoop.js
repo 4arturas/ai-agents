@@ -53,6 +53,15 @@ function CognitiveLoop() {
         Your goal is: ${problem}.
         Your past actions: ${JSON.stringify(pastActions)}.
         Please analyze the current situation and provide information to help achieve the goal.
+
+        FORMAT YOUR RESPONSE AS:
+        **Key Observations:**
+        - Observation 1
+        - Observation 2
+
+        **Relevant Information:**
+        - Detail 1
+        - Detail 2
         `;
         const response = await callOllama(observe);
         setObserveResponse(response);
@@ -68,6 +77,15 @@ function CognitiveLoop() {
         Your goal is: ${problem}.
         Your past actions: ${JSON.stringify(pastActions)}.
         Please think through the best next step to achieve the goal.
+
+        FORMAT YOUR RESPONSE AS:
+        **Thought Process:**
+        - Consideration 1
+        - Consideration 2
+
+        **Next Steps:**
+        - Option 1
+        - Option 2
         `;
         const response = await callOllama(thinkPrompt);
         setThinkResponse(response);
@@ -83,7 +101,17 @@ function CognitiveLoop() {
         Your goal is: ${problem}.
         Your past actions: ${JSON.stringify(pastActions)}.
         Available actions are: observe, think, decide, learn.
-        Respond with a JSON object in this format {action: "...", reason: "..."}.
+
+        FORMAT YOUR RESPONSE AS:
+        **Decision:**
+        - Selected action: [action name]
+
+        **Reasoning:**
+        - Reason 1
+        - Reason 2
+
+        **Expected Outcome:**
+        - Outcome 1
         `;
         const response = await callOllama(decidePrompt);
         setDecideResponse(response);
@@ -99,6 +127,18 @@ function CognitiveLoop() {
         Your goal was: ${problem}.
         Your past actions: ${JSON.stringify(pastActions)}.
         Please identify any patterns or lessons that could be useful for achieving similar goals in the future.
+
+        FORMAT YOUR RESPONSE AS:
+        **Key Lessons:**
+        - Lesson 1
+        - Lesson 2
+
+        **Patterns Identified:**
+        - Pattern 1
+        - Pattern 2
+
+        **Future Recommendations:**
+        - Recommendation 1
         `;
         const response = await callOllama(learnPrompt);
         setLearnResponse(response);
