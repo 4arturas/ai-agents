@@ -21,6 +21,25 @@ function CognitiveLoop() {
         learn: false
     });
 
+    // Function to render simple markdown
+    const renderMarkdown = (text) => {
+        if (!text) return '';
+
+        // Convert **bold** to <strong>
+        let html = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+        // Convert - list items to <ul><li>
+        html = html.replace(/(?:\r\n|\r|\n)- (.*?)(?=\r\n|\r|\n|$)/g, '<li>$1</li>');
+
+        // Wrap consecutive list items in <ul> tags
+        html = html.replace(/(<li>.*<\/li>)+/g, '<ul>$&</ul>');
+
+        // Convert line breaks to <br>
+        html = html.replace(/\r\n|\r|\n/g, '<br>');
+
+        return html;
+    };
+
 
     // Function to call Ollama API
     const callOllama = async (prompt) => {
@@ -199,28 +218,28 @@ function CognitiveLoop() {
                     loading={loading.observe && !observeResponse}
                     style={{ minHeight: '200px' }}
                 >
-                    {observeResponse && <div>{observeResponse}</div>}
+                    {observeResponse && <div dangerouslySetInnerHTML={{ __html: renderMarkdown(observeResponse) }}></div>}
                 </Card>
                 <Card
                     title="Think"
                     loading={loading.think && !thinkResponse}
                     style={{ minHeight: '200px' }}
                 >
-                    {thinkResponse && <div>{thinkResponse}</div>}
+                    {thinkResponse && <div dangerouslySetInnerHTML={{ __html: renderMarkdown(thinkResponse) }}></div>}
                 </Card>
                 <Card
                     title="Decide"
                     loading={loading.decide && !decideResponse}
                     style={{ minHeight: '200px' }}
                 >
-                    {decideResponse && <div>{decideResponse}</div>}
+                    {decideResponse && <div dangerouslySetInnerHTML={{ __html: renderMarkdown(decideResponse) }}></div>}
                 </Card>
                 <Card
                     title="Learn"
                     loading={loading.learn && !learnResponse}
                     style={{ minHeight: '200px' }}
                 >
-                    {learnResponse && <div>{learnResponse}</div>}
+                    {learnResponse && <div dangerouslySetInnerHTML={{ __html: renderMarkdown(learnResponse) }}></div>}
                 </Card>
             </div>
         </div>
