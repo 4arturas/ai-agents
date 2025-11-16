@@ -137,3 +137,11 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+
+*.iml
+.idea
+
+QWEN.md
+GEMINI.md
+task.md
