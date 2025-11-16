@@ -48,7 +48,6 @@ function CognitiveLoop() {
     const handleObserve = async () => {
         if (!problem) return;
         setLoading(prev => ({ ...prev, observe: true }));
-        // TODO: implement all actions the same manner as here
         const observe = `
         You are an AI agent.
         Your goal is: ${problem}.
